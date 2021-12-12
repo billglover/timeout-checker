@@ -5,7 +5,6 @@ builds:
     goos:
       - darwin
       - linux
-      - windows
     goarch:
       - arm64
       - amd64
@@ -50,6 +49,16 @@ dockers:
     goos: linux
     goarch: amd64
     dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+    - --platform=linux/amd64
+    - --label=org.opencontainers.image.title={{ .ProjectName }}
+    - --label=org.opencontainers.image.description={{ .ProjectName }}
+    - --label=org.opencontainers.image.url=https://github.com/billglover/{{ .ProjectName }}
+    - --label=org.opencontainers.image.source=https://github.com/billglover/{{ .ProjectName }}
+    - --label=org.opencontainers.image.version={{ .Version }}
+    - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
+    - --label=org.opencontainers.image.revision={{ .FullCommit }}
     extra_files:
       - "echo.json"
   - image_templates:
@@ -57,6 +66,16 @@ dockers:
     goos: linux
     goarch: arm64
     dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+    - --platform=linux/arm64/v8
+    - --label=org.opencontainers.image.title={{ .ProjectName }}
+    - --label=org.opencontainers.image.description={{ .ProjectName }}
+    - --label=org.opencontainers.image.url=https://github.com/billglover/{{ .ProjectName }}
+    - --label=org.opencontainers.image.source=https://github.com/billglover/{{ .ProjectName }}
+    - --label=org.opencontainers.image.version={{ .Version }}
+    - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
+    - --label=org.opencontainers.image.revision={{ .FullCommit }}
     extra_files:
       - "echo.json"
 docker_manifests:
