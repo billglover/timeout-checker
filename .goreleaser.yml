@@ -64,9 +64,7 @@ docker_manifests:
   image_templates:
   - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-amd64
   - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-arm64v8
-  skip_push: "true"
 - name_template: ghcr.io/billglover/{{ .ProjectName }}:latest
   image_templates:
   - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-amd64
   - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-arm64v8
-  skip_push: "true"
