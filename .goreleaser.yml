@@ -1,36 +1,18 @@
 builds:
-  - id: darwin-amd64
+  - id: "timeout-checker"
     main: ./
     binary: checker-api
     goos:
       - darwin
-    goarch:
-      - amd64
-    env:
-      - PKG_CONFIG_SYSROOT_DIR=/sysroot/macos/amd64
-      - PKG_CONFIG_PATH=/sysroot/macos/amd64/usr/local/lib/pkgconfig
-      - CC=o64-clang
-      - CXX=o64-clang++
-    flags:
-      - -mod=readonly
-    ldflags:
-      - -s -w -X main.version={{.Version}}
-  - id: linux-armhf
-    main: ./
-    binary: checker-api
-    goos:
       - linux
+      - windows
     goarch:
-      - arm
+      - arm64
+      - amd64
     goarm:
-      - 7
+      - "8"
     env:
-      - CC=arm-linux-gnueabihf-gcc
-      - CXX=arm-linux-gnueabihf-g++
-      - CGO_FLAGS=--sysroot=/sysroot/linux/armhf
-      - CGO_LDFLAGS=--sysroot=/sysroot/linux/armhf
-      - PKG_CONFIG_SYSROOT_DIR=/sysroot/linux/armhf
-      - PKG_CONFIG_PATH=/sysroot/linux/armhf/opt/vc/lib/pkgconfig:/sysroot/linux/armhf/usr/lib/arm-linux-gnueabihf/pkgconfig:/sysroot/linux/armhf/usr/lib/pkgconfig:/sysroot/linux/armhf/usr/local/lib/pkgconfig
+      - CGO_ENABLED=0
     flags:
       - -mod=readonly
     ldflags:
@@ -38,11 +20,12 @@ builds:
 archives:
   - id: golang-cross
     builds:
-      - darwin-amd64
-      - linux-armhf
+      - "timeout-checker"
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format: zip
-    wrap_in_directory: true
+    wrap_in_directory: "true"
+    files:
+    - "echo.json"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -61,3 +44,29 @@ brews:
     folder: Formula
     homepage: https://github.com/applegreengrape/timeout-checker
     description: simple wait& response api for timeout test
+dockers:
+  - image_templates:
+    - "ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-amd64"
+    goos: linux
+    goarch: amd64
+    dockerfile: Dockerfile
+    extra_files:
+      - "echo.json"
+  - image_templates:
+    - "ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-arm64"
+    goos: linux
+    goarch: arm64
+    dockerfile: Dockerfile
+    extra_files:
+      - "echo.json"
+docker_manifests:
+- name_template: ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}
+  image_templates:
+  - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-amd64
+  - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-arm64v8
+  skip_push: "true"
+- name_template: ghcr.io/billglover/{{ .ProjectName }}:latest
+  image_templates:
+  - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-amd64
+  - ghcr.io/billglover/{{ .ProjectName }}:{{ .Version }}-arm64v8
+  skip_push: "true"
